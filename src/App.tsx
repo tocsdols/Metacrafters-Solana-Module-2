@@ -180,6 +180,7 @@ export default function App() {
    */
   const transferSol = async () => {
     // create a new transaction for the transfer
+    // send 1 SOL to receiver / phantom wallet
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: senderKeypair!.publicKey,
@@ -189,6 +190,7 @@ export default function App() {
     );
 
     // send and confirm the transaction
+    // get the transaction signature
     const signature = await sendAndConfirmTransaction(connection, transaction, [
       senderKeypair!,
     ]);
@@ -197,12 +199,14 @@ export default function App() {
 
     let latestBlockHash = await connection.getLatestBlockhash();
 
+    // confirm the transaction using the latest blockhash
     await connection.confirmTransaction({
       blockhash: latestBlockHash.blockhash,
       lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
       signature: signature,
     });
 
+    // print the account balances of the sender and receiver wallet
     console.log("transaction sent and confirmed");
     console.log(
       "Sender Balance: " +
